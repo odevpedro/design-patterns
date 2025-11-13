@@ -16,7 +16,6 @@ public class CommonStrategy {
         processor.pay(amount);
     }
 }
-
 class PaymentProcessor {
     private PaymentMethod paymentMethod;
 
