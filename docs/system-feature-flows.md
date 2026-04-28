@@ -16,6 +16,9 @@
 - [Feature: Builder Pattern](#feature-builder-pattern)
 - [Feature: Factory Pattern](#feature-factory-pattern)
 - [Feature: Singleton Pattern](#feature-singleton-pattern)
+- [Feature: Decorator Pattern](#feature-decorator-pattern)
+- [Feature: Proxy Pattern](#feature-proxy-pattern)
+- [Feature: Command Pattern](#feature-command-pattern)
 
 ---
 
@@ -31,11 +34,14 @@
 com.banking/
 ├── model/           # Entidades (Account, AccountImpl)
 ├── observer/        # Observer Pattern
-├── strategy/       # Strategy Pattern (PaymentMethod)
-├── builder/        # Builder Pattern
-├── factory/        # Factory Pattern
-├── singleton/     # Singleton Pattern
-└── demo/          # Demonstrações
+├── strategy/        # Strategy Pattern (PaymentMethod)
+├── builder/         # Builder Pattern
+├── factory/         # Factory Pattern
+├── singleton/       # Singleton Pattern
+├── decorator/       # Decorator Pattern
+├── proxy/           # Proxy Pattern
+├── command/         # Command Pattern
+└── demo/            # Demonstrações
 ```
 
 ---
@@ -469,6 +475,231 @@ mvn exec:java -Dexec.mainClass="com.banking.demo.SingletonDemo"
 |-----------|-----|--------|
 | synchronized | Simples | Sincronização constante |
 | Double-checked | Otimizado | Complexo |
+
+---
+
+---
+
+# Feature: Decorator Pattern
+
+> **Versão:** 1.1.0
+> **Implementada em:** 2026-04-28
+> **Status:** Concluída
+
+---
+
+## Resumo
+
+Decorators que envolvem um `Account` para adicionar comportamentos extras sem alterar a classe original.
+
+**Motivação:** Adicionar log e cobrança de taxa em operações sem herança ou modificação de AccountImpl.
+**Resultado:** Composição flexivel de comportamentos em tempo de execução.
+
+---
+
+## Design Pattern
+
+| Pattern | Categoria | Motivação |
+|---------|-----------|-----------|
+| Decorator | Structural | Composição de responsabilidades |
+
+---
+
+## Estrutura de Arquivos
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `decorator/AccountDecorator.java` | Classe base abstrata que delega para o wrapped |
+| `decorator/LoggingAccountDecorator.java` | Loga timestamp, tipo e novo saldo em cada operação |
+| `decorator/FeeChargeDecorator.java` | Cobra percentual de taxa sobre débitos |
+
+---
+
+## Fluxo Principal
+
+1. **Wrap:** Cliente envolve um Account com um ou mais decorators
+2. **Chamada:** Decorator executa comportamento adicional (log, taxa)
+3. **Delegação:** Decorator repassa a chamada para o wrapped
+
+---
+
+## Código Relevante
+
+```java
+Account withFee = new FeeChargeDecorator(
+    new LoggingAccountDecorator(base), 2.0
+);
+withFee.debit(100.0);
+// [FEE] Charging fee: 2.00 (2.0%) on debit of 100.00
+// [LOG] DEBIT | Account: 11111-1 | Amount: 102.0
+```
+
+---
+
+## Demonstração
+
+```bash
+java -cp target/classes com.banking.demo.DecoratorDemo
+```
+
+---
+
+## ADR
+
+| Campo | Detalhe |
+|-------|---------|
+| **Status** | Aceita |
+| **Data** | 2026-04-28 |
+| **Decisão** | Classe abstrata base evita duplicação nos decorators concretos |
+
+---
+
+---
+
+# Feature: Proxy Pattern
+
+> **Versão:** 1.1.0
+> **Implementada em:** 2026-04-28
+> **Status:** Concluída
+
+---
+
+## Resumo
+
+Protection Proxy que controla o acesso a operações de uma conta, permitindo congelar e descongelar a conta.
+
+**Motivação:** Bloquear operações em contas suspeitas sem alterar a implementação de Account.
+**Resultado:** Controle de acesso centralizado e transparente para o cliente.
+
+---
+
+## Design Pattern
+
+| Pattern | Categoria | Motivação |
+|---------|-----------|-----------|
+| Proxy | Structural | Controle de acesso (Protection Proxy) |
+
+---
+
+## Estrutura de Arquivos
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `proxy/AccountAccessProxy.java` | Proxy de proteção com suporte a freeze/unfreeze |
+
+---
+
+## Fluxo Principal
+
+1. **Operação normal:** Proxy valida estado e delega para a conta real
+2. **Conta congelada:** Proxy lança IllegalStateException antes de delegar
+3. **Descongelamento:** Proxy reabilita operações
+
+---
+
+## Código Relevante
+
+```java
+AccountAccessProxy proxy = new AccountAccessProxy(account);
+proxy.freeze();
+proxy.debit(100.0); // throws IllegalStateException
+proxy.unfreeze();
+proxy.debit(100.0); // executa normalmente
+```
+
+---
+
+## Demonstração
+
+```bash
+java -cp target/classes com.banking.demo.ProxyDemo
+```
+
+---
+
+## ADR
+
+| Campo | Detalhe |
+|-------|---------|
+| **Status** | Aceita |
+| **Data** | 2026-04-28 |
+| **Decisão** | Protection Proxy escolhido por ser o caso mais representativo em banking |
+
+---
+
+---
+
+# Feature: Command Pattern
+
+> **Versão:** 1.1.0
+> **Implementada em:** 2026-04-28
+> **Status:** Concluída
+
+---
+
+## Resumo
+
+Comandos que encapsulam operações bancárias (crédito, débito, transferência) com suporte a undo/redo via `TransactionHistory`.
+
+**Motivação:** Desfazer transações e manter histórico auditável sem acoplamento.
+**Resultado:** Operações reversíveis e rastreáveis.
+
+---
+
+## Design Pattern
+
+| Pattern | Categoria | Motivação |
+|---------|-----------|-----------|
+| Command | Behavioral | Encapsulamento de operações com undo/redo |
+
+---
+
+## Estrutura de Arquivos
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `command/BankingCommand.java` | Interface com execute(), undo(), getDescription() |
+| `command/CreditCommand.java` | Encapsula um crédito; undo faz débito |
+| `command/DebitCommand.java` | Encapsula um débito; undo faz crédito |
+| `command/TransferCommand.java` | Encapsula transferência entre contas; undo reverte |
+| `command/TransactionHistory.java` | Pilha de comandos com execute/undo/redo |
+
+---
+
+## Fluxo Principal
+
+1. **Execute:** `TransactionHistory.execute(command)` executa e empilha
+2. **Undo:** `undo()` desempilha, chama `command.undo()`, empilha em undone
+3. **Redo:** `redo()` desempilha de undone, re-executa e empilha em history
+
+---
+
+## Código Relevante
+
+```java
+TransactionHistory history = new TransactionHistory();
+history.execute(new TransferCommand(alice, bob, 300.0));
+history.undo();   // reverte a transferência
+history.redo();   // reaplica a transferência
+```
+
+---
+
+## Demonstração
+
+```bash
+java -cp target/classes com.banking.demo.CommandDemo
+```
+
+---
+
+## ADR
+
+| Campo | Detalhe |
+|-------|---------|
+| **Status** | Aceita |
+| **Data** | 2026-04-28 |
+| **Decisão** | Dois Deques separados (history/undone) permitem redo sem recomputar |
 
 ---
 

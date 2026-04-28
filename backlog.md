@@ -1,7 +1,7 @@
-# Backlog — Design Patterns — Sistema Bancário
+22# Backlog — Design Patterns — Sistema Bancário
 
 > Registro vivo do progresso do projeto. Atualizado a cada mudança de estado de uma funcionalidade.
-> **Última atualização:** 2026-04-17
+> **Última atualização:** 2026-04-28
 
 ---
 
@@ -44,6 +44,9 @@ Projeto educacional em Java demonstrando design patterns em um sistema bancário
 | Factory Pattern | Factory | 2026-04-17 | Concluída |
 | Singleton Pattern | Singleton | 2026-04-17 | Concluída |
 | Refatoração estrutura profissional | Refactor | 2026-04-17 | Concluída |
+| Decorator Pattern | Decorator | 2026-04-28 | Concluída |
+| Proxy Pattern | Proxy | 2026-04-28 | Concluída |
+| Command Pattern | Command | 2026-04-28 | Concluída |
 
 ---
 
@@ -51,11 +54,7 @@ Projeto educacional em Java demonstrando design patterns em um sistema bancário
 
 > Ordenadas por prioridade. Itens de P0 e P1 devem entrar em "Em Andamento" primeiro.
 
-| ID | Feature | Pattern | Prioridade | Complexidade | Observação |
-|----|---------|---------|----------|------------|--------------|-------------|
-| 1 | Decorator Pattern | Decorator | P2 | M | Adicionar decorators para Account |
-| 2 | Proxy Pattern | Proxy | P2 | M | Proxy para operações bancárias |
-| 3 | Command Pattern | Command | P2 | M | Encapsular operações |
+<!-- Nenhuma feature pendente -->
 
 ---
 
@@ -83,8 +82,8 @@ Projeto educacional em Java demonstrando design patterns em um sistema bancário
 
 | ID | Decisão | Status | Observação |
 |----|---------|--------|-------------|
-| N1 | Adicionar mais demos de patterns? | Aberto | Decorator, Proxy, Command |
-| N2 | Adicionar testes unitários? | Aberto | Enhancement |
+| N1 | Adicionar mais demos de patterns? | Resolvido | Decorator, Proxy e Command implementados em 2026-04-28 |
+| N2 | Adicionar testes unitários? | Resolvido | 75 testes JUnit 5 implementados em 2026-04-28 |
 
 ---
 
@@ -93,3 +92,4 @@ Projeto educacional em Java demonstrando design patterns em um sistema bancário
 | Versão | Data | Principais entregas |
 |--------|------|---------------------|
 | `1.0-SNAPSHOT` | 2026-04-17 | MVP com 5 patterns implementados |
+| `1.1-SNAPSHOT` | 2026-04-28 | Decorator, Proxy e Command patterns + 75 testes JUnit 5 |

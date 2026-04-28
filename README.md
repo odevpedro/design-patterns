@@ -18,6 +18,9 @@ Projeto educacional em Java demonstrando a implementação de design patterns em
 - **Builder** — Construção fluente de objetos Account
 - **Factory** — Criação centralizada de contas por tipo
 - **Singleton** — Serviço bancário centralizado
+- **Decorator** — Adição de comportamentos (log, taxa) em tempo de execução
+- **Proxy** — Controle de acesso com suporte a congelamento de conta
+- **Command** — Operações encapsuladas com suporte a undo/redo
 
 ---
 
@@ -27,9 +30,10 @@ Projeto educacional em Java demonstrando a implementação de design patterns em
 |----------------|------------------------------|
 | Runtime        | Java 17+                     |
 | Build          | Maven 3.x / javac             |
-| Patterns       | Creational, Behavioral        |
+| Testes         | JUnit 5 (junit-jupiter)       |
+| Patterns       | Creational, Structural, Behavioral |
 
-> Padrão arquitetural: **Camadas simples** com separação por responsabilidade (`model`, `observer`, `strategy`, `builder`, `factory`, `singleton`).
+> Padrão arquitetural: **Camadas simples** com separação por responsabilidade (`model`, `observer`, `strategy`, `builder`, `factory`, `singleton`, `decorator`, `proxy`, `command`).
 
 ---
 
@@ -55,6 +59,18 @@ src/main/java/com/banking/
 │   └── AccountFactory.java
 ├── singleton/
 │   └── BankingService.java
+├── decorator/
+│   ├── AccountDecorator.java
+│   ├── LoggingAccountDecorator.java
+│   └── FeeChargeDecorator.java
+├── proxy/
+│   └── AccountAccessProxy.java
+├── command/
+│   ├── BankingCommand.java
+│   ├── CreditCommand.java
+│   ├── DebitCommand.java
+│   ├── TransferCommand.java
+│   └── TransactionHistory.java
 └── demo/
     ├── ObserverDemo.java
     ├── StrategyDemo.java
@@ -62,7 +78,10 @@ src/main/java/com/banking/
     ├── FactoryDemo.java
     ├── SingletonDemo.java
     ├── AntiPatternDemo.java
-    └── ModernStrategyDemo.java
+    ├── ModernStrategyDemo.java
+    ├── DecoratorDemo.java
+    ├── ProxyDemo.java
+    └── CommandDemo.java
 
 docs/
 └── system-feature-flows.md
@@ -78,6 +97,12 @@ pom.xml
 - Java 17+
 - Maven 3.x (opcional)
 
+### Testes
+
+```bash
+mvn test
+```
+
 ### Compilação
 
 ```bash
@@ -87,14 +112,19 @@ mvn compile
 ### Execução dos Demos
 
 ```bash
+mvn compile
+
 # Demos de Patterns
-mvn exec:java -Dexec.mainClass="com.banking.demo.ObserverDemo"
-mvn exec:java -Dexec.mainClass="com.banking.demo.StrategyDemo"
-mvn exec:java -Dexec.mainClass="com.banking.demo.BuilderDemo"
-mvn exec:java -Dexec.mainClass="com.banking.demo.FactoryDemo"
-mvn exec:java -Dexec.mainClass="com.banking.demo.SingletonDemo"
-mvn exec:java -Dexec.mainClass="com.banking.demo.ModernStrategyDemo"
-mvn exec:java -Dexec.mainClass="com.banking.demo.AntiPatternDemo"
+java -cp target/classes com.banking.demo.ObserverDemo
+java -cp target/classes com.banking.demo.StrategyDemo
+java -cp target/classes com.banking.demo.BuilderDemo
+java -cp target/classes com.banking.demo.FactoryDemo
+java -cp target/classes com.banking.demo.SingletonDemo
+java -cp target/classes com.banking.demo.ModernStrategyDemo
+java -cp target/classes com.banking.demo.AntiPatternDemo
+java -cp target/classes com.banking.demo.DecoratorDemo
+java -cp target/classes com.banking.demo.ProxyDemo
+java -cp target/classes com.banking.demo.CommandDemo
 ```
 
 ---
@@ -105,16 +135,24 @@ mvn exec:java -Dexec.mainClass="com.banking.demo.AntiPatternDemo"
 
 | Pattern    | Descrição                              | Arquivo                    |
 |------------|----------------------------------------|---------------------------|
-| Observer   | Sistema de notificações desacoplado      | `observer/*.java`         |
-| Strategy   | Algoritmos intercambiáveis              | `strategy/*.java`         |
+| Observer   | Sistema de notificações desacoplado    | `observer/*.java`         |
+| Strategy   | Algoritmos intercambiáveis             | `strategy/*.java`         |
+| Command    | Operações encapsuladas com undo/redo   | `command/*.java`          |
 
 ### Creational Patterns
 
 | Pattern    | Descrição                              | Arquivo                    |
 |------------|----------------------------------------|---------------------------|
-| Builder    | Construção fluente de objetos          | `builder/*.java`         |
-| Factory    | Criação centralizada por tipo          | `factory/*.java`         |
-| Singleton  | Uma instância única                    | `sankingService.java`    |
+| Builder    | Construção fluente de objetos          | `builder/*.java`          |
+| Factory    | Criação centralizada por tipo          | `factory/*.java`          |
+| Singleton  | Uma instância única                    | `singleton/*.java`        |
+
+### Structural Patterns
+
+| Pattern    | Descrição                              | Arquivo                    |
+|------------|----------------------------------------|---------------------------|
+| Decorator  | Composição de comportamentos           | `decorator/*.java`        |
+| Proxy      | Controle de acesso com freeze/unfreeze | `proxy/*.java`            |
 
 ---
 
@@ -135,6 +173,9 @@ mvn exec:java -Dexec.mainClass="com.banking.demo.AntiPatternDemo"
 [x] Builder Pattern — AccountBuilder
 [x] Factory Pattern — AccountFactory
 [x] Singleton Pattern — BankingService
+[x] Decorator Pattern — LoggingAccountDecorator, FeeChargeDecorator
+[x] Proxy Pattern — AccountAccessProxy (protection proxy)
+[x] Command Pattern — CreditCommand, DebitCommand, TransferCommand + undo/redo
 ```
 
 ---
